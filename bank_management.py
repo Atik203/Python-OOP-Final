@@ -63,10 +63,14 @@ class Account:
 
     def deposit(self, amount):
         self.__balance += amount
+        self.transaction_history["Deposit"] = amount
+        print(f'\nYou have deposited ${amount} successfully\n')
 
     def withdraw(self, amount):
         if amount <= self.__balance:
             self.__balance -= amount
+            self.transaction_history["Withdraw"] = amount
+            print(f'\nYou have withdrawn ${amount} successfully\n')
         else:
             print("Withdrawal amount exceeded")
 
@@ -74,11 +78,13 @@ class Account:
         if amount <= self.__balance:
             self.__balance -= amount
             self.transaction_history[account_number] = amount
+            print(f'\nYou have transferred ${amount} to account number {account_number} successfully\n')
 
         else:
             print("Account does not exist")
 
     def view_history(self):
+        print("\n-----Transaction History----\n")
         print(self.transaction_history)
 
     def check_balance(self):
@@ -89,6 +95,9 @@ class Account:
             if amount > 0:
                 self.__balance += amount
                 self.can_take_loan -= 1
+                self.loan += amount
+                self.transaction_history["Loan"] = amount
+                print(f'\nYou have taken a loan of ${amount} successfully\n')
             else:
                 print("Invalid loan amount")
         else:
