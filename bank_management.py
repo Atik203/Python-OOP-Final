@@ -17,12 +17,15 @@ class Bank:
         return account
 
     def delete_account(self, account_number):
+        account_found = False
         for account in self.accounts:
-            if account.__account_number == account_number:
+            if account._Account__account_number == account_number:
                 self.accounts.remove(account)
-            else:
-                print("Account not found")
+                account_found = True
+                print(f"Account Number {account_number} deleted successfully")
                 break
+        if not account_found:
+            print("Account not found")
 
     def __repr__(self):
         print(f"Bank Name: {self.name}")
@@ -58,7 +61,7 @@ class Account:
         self.__account_number = self.generate_account_number()
 
     def generate_account_number(self):
-        account_number = random.randint(1000, 9999)
+        account_number = random.randint(100, 999)
         return account_number
 
     def deposit(self, amount):
@@ -75,17 +78,27 @@ class Account:
             print("Withdrawal amount exceeded")
 
     def transfer(self, amount, account_number):
+        receiver = None
+        for account in bank.accounts:
+            if account.__account_number == account_number:
+                receiver = account
+                break
+            else:
+                print("Account does not exist")
+                break
         if amount <= self.__balance:
             self.__balance -= amount
+            receiver.__balance += amount
             self.transaction_history[account_number] = amount
             print(f'\nYou have transferred ${amount} to account number {account_number} successfully\n')
 
         else:
-            print("Account does not exist")
+            print("Transfer amount exceeded")
 
     def view_history(self):
         print("\n-----Transaction History----\n")
-        print(self.transaction_history)
+        for key, value in self.transaction_history.items():
+            print(f"{key}: ${value}")
 
     def check_balance(self):
         print(f"Your current balance is: ${self.__balance}")
@@ -96,10 +109,12 @@ class Account:
                 self.__balance += amount
                 self.can_take_loan -= 1
                 self.loan += amount
-                self.transaction_history["Loan"] = amount
+                self.transaction_history["Loan"] = self.loan
                 print(f'\nYou have taken a loan of ${amount} successfully\n')
             else:
                 print("Invalid loan amount")
+        elif admin.isLoanActive is False:
+            print("Loan is currently off")
         else:
             print("You have reached the maximum number of loans")
 
@@ -150,6 +165,7 @@ while True:
         print("L. Login")
         print("R. Register")
         print("A. Admin Login")
+        print("E. Exit")
         choice = input("\nEnter your choice: ")
         if choice == "R":
             name = input("Name: ")
@@ -166,6 +182,9 @@ while True:
                     break
             else:
                 print("Account not found")
+        elif choice == "E":
+            print("Exiting....")
+            break
         elif choice == "A":
             ch = input("Enter Admin Password: ")
             print("----Admin Login Successful----")
@@ -178,6 +197,7 @@ while True:
                 print("5. Loan Feature on/off")
                 print("6. View User List")
                 print("7. Logout")
+                print("Exit")
                 op = input("\nChoose an option: ")
                 if op == "1":
                     name = input("Name: ")
@@ -193,7 +213,7 @@ while True:
                 elif op == "4":
                     admin.get_loan()
                 elif op == "5":
-                    enable = input("on/off: ")
+                    enable = input("Enter on/off: ")
                     if enable == "on":
                         admin.enable_loan(True)
                     else:
@@ -203,7 +223,7 @@ while True:
                 elif op == "7":
                     admin_mode = False
                 else:
-                    print("Invalid option")
+                    print("Exiting.....")
                     break
 
     else:
@@ -215,6 +235,7 @@ while True:
         print("5.Take Loan")
         print("6.View Transaction History")
         print("7.Logout")
+        print("Exit")
         op = input("\nChoose an option: ")
         if op == "1":
             amount = int(input("Enter the amount to deposit: "))
@@ -236,5 +257,5 @@ while True:
         elif op == "7":
             current_user = None
         else:
-            print("Invalid option")
+            print("Exiting....")
             break
